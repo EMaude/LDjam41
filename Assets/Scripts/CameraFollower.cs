@@ -18,40 +18,26 @@ public class CameraFollower : MonoBehaviour {
     {
 		
 	}
-	
-	// Update is called once per frame
-	void Update ()
-    {
-		
-	}
 
     void LateUpdate()
     {
+        if (follow != null)
+        {
+            Vector3 followPos = follow.position + offset;
+            Vector3 smoothedPos = Vector3.Lerp(transform.position, followPos, smoothing);
 
-        Vector3 followPos = follow.position + offset;
-        Vector3 smoothedPos = Vector3.Lerp(transform.position, followPos, smoothing);
-
-        if (!useBounds)
-        {
-            transform.position = smoothedPos;
+            if (!useBounds)
+            {
+                transform.position = smoothedPos;
+            }
+            else if (smoothedPos.y > maxBounds.y || smoothedPos.y < minBounds.y)
+            {
+                transform.position = new Vector3(smoothedPos.x, transform.position.y, transform.position.z);
+            }
+            else
+            {
+                transform.position = smoothedPos;
+            }
         }
-        else if(smoothedPos.x < maxBounds.x && smoothedPos.x > minBounds.x && smoothedPos.y < maxBounds.y && smoothedPos.y > minBounds.y)
-        {
-            transform.position = smoothedPos;
-        }
-        else if (smoothedPos.x < maxBounds.x && smoothedPos.x > minBounds.x)
-        {
-            transform.position = new Vector3(smoothedPos.x, transform.position.y, transform.position.z);
-        }
-        else if (smoothedPos.y < maxBounds.y && smoothedPos.y > minBounds.y)
-        {
-            transform.position = new Vector3(transform.position.x, smoothedPos.y, transform.position.z);
-        }
-        else
-        {
-            transform.position = transform.position;
-        }
-
-        
     }
 }

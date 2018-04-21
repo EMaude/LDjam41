@@ -14,35 +14,48 @@ public class GameController : MonoBehaviour {
     public float TurnTimer;
     public float PauseTime;
     private double timer;
+    private bool gameOver = false;
 
     [Header("UI")]
     public TextMeshProUGUI TimerText;
     public TextMeshProUGUI CountDownText;
+
+    private void Start()
+    {
+
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if (timer > 0)
+        if (!gameOver)
         {
-            timer -= Time.deltaTime;
-            if(timer < 0)
+            if (timer > 0)
             {
-                timer = 0;
+                timer -= Time.deltaTime;
+                if (timer < 0)
+                {
+                    timer = 0;
+                }
+
+                TimerText.SetText("Time: " + Math.Round(timer, 4));
+            }
+            else
+            {
+                StartCoroutine(Pause());
+                state = (state == TurnStates.Player) ? TurnStates.Enemies : TurnStates.Player;
+                timer = TurnTimer;
             }
 
-            TimerText.SetText("Time: " + Math.Round(timer, 4));
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                SceneManager.LoadScene(0);
+            }
         }
         else
         {
-            StartCoroutine(Pause());
-            state = (state == TurnStates.Player) ? TurnStates.Enemies : TurnStates.Player;
-            timer = TurnTimer;
+            CountDownText.SetText("GameOver");
         }
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            SceneManager.LoadScene(0);
-        }
-
     }
 
     IEnumerator Pause()
@@ -73,4 +86,10 @@ public class GameController : MonoBehaviour {
     {
         return state;
     }
+
+    public void GameOver()
+    {
+        gameOver = true;
+    }
+
 }
